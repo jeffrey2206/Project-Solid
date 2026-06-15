@@ -1,28 +1,33 @@
-
 /**
- * VIOLACIÓN AL PRINCIPIO DE INVERSIÓN DE DEPENDENCIAS (DIP)
- * 
- * El servicio de publicaciones depende de una implementación concreta
- * en lugar de una abstracción.
+ * PostService — Servicio de publicaciones de la Reserva Ecológica
+ *
+ * ANTES (violación DIP): PostService instanciaba LocalDatabaseService directamente
+ * dentro de getPosts(). Era imposible cambiar el proveedor sin abrir este archivo.
+ * El módulo de alto nivel dependía del módulo de bajo nivel.
+ *
+ * DESPUÉS (DIP aplicado): PostService depende de la ABSTRACCIÓN DatabaseProvider.
+ * La implementación concreta (Local, JSON, API, Mock) se inyecta desde afuera.
+ * El módulo de alto nivel ya no conoce al módulo de bajo nivel.
  */
-
-import { LocalDatabaseService } from '../data/local-database';
+import type { DatabaseProvider, EcoPost } from '../data/database-provider.interface';
 
 export class PostService {
+  private posts: EcoPost[] = [];
 
-    private posts: any[] = [];
+  /**
+   * @param databaseProvider - Proveedor de datos inyectado desde el exterior.
+   *   Puede ser LocalDatabaseService, JsonDatabaseService, o cualquier
+   *   implementación futura de DatabaseProvider.
+   */
+  constructor(private readonly databaseProvider: DatabaseProvider) {}
 
-    async getPosts() {
-        /**
-         * VIOLACIÓN: Instanciación directa de una dependencia.
-         * No podemos inyectar un proveedor diferente (como JsonDatabaseService)
-         * sin modificar el constructor o este método. 
-         * El nivel superior (PostService) depende del nivel inferior (LocalDatabaseService).
-         */
-        const databaseProvider = new LocalDatabaseService();
-        this.posts = await databaseProvider.getFakePosts();
-
-        return this.posts;
-    }
-
+  /**
+   * Recupera las publicaciones y reportes de la Reserva Ecológica.
+   * Delega la obtención de datos al proveedor inyectado.
+   */
+  async getPosts(): Promise<EcoPost[]> {
+    console.log('[PostService] Solicitando publicaciones al proveedor de datos...');
+    this.posts = await this.databaseProvider.getFakePosts();
+    return this.posts;
+  }
 }
