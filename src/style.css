@@ -1,8 +1,210 @@
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+/* ─── Google Fonts ──────────────────────────────────────────────────────────── */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap');
+
+/* ─── Design Tokens ──────────────────────────────────────────────────────────── */
+:root {
+  --color-bg:          #0d1117;
+  --color-surface:     #161b22;
+  --color-border:      #30363d;
+  --color-text:        #e6edf3;
+  --color-text-muted:  #8b949e;
+
+  --color-s: #58a6ff;
+  --color-o: #3fb950;
+  --color-l: #d2a8ff;
+  --color-i: #ffa657;
+  --color-d: #f85149;
+
+  --gradient-hero: linear-gradient(135deg, #0d1117 0%, #161b22 50%, #0d1117 100%);
+  --shadow-card: 0 4px 24px rgba(0, 0, 0, 0.5);
+  --radius: 12px;
+  --transition: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* ─── Reset & Base ───────────────────────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: 'Inter', system-ui, sans-serif;
+  background-color: var(--color-bg);
+  color: var(--color-text);
+  min-height: 100vh;
+  line-height: 1.6;
+}
+
+/* ─── Hero ───────────────────────────────────────────────────────────────────── */
+.hero {
+  background: var(--gradient-hero);
+  border-bottom: 1px solid var(--color-border);
+  padding: 64px 24px 56px;
   text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
+  position: relative;
+  overflow: hidden;
+}
+
+.hero::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse 80% 50% at 50% 0%, rgba(88, 166, 255, 0.08), transparent);
+  pointer-events: none;
+}
+
+.hero-content { position: relative; z-index: 1; max-width: 600px; margin: 0 auto; }
+
+.badge {
+  display: inline-block;
+  background: rgba(88, 166, 255, 0.12);
+  color: var(--color-s);
+  border: 1px solid rgba(88, 166, 255, 0.3);
+  border-radius: 999px;
+  padding: 4px 16px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  margin-bottom: 20px;
+}
+
+.hero h1 {
+  font-size: clamp(2.2rem, 6vw, 3.5rem);
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  background: linear-gradient(135deg, #e6edf3 30%, #58a6ff 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin-bottom: 16px;
+}
+
+.subtitle {
+  color: var(--color-text-muted);
+  font-size: 1.05rem;
+  font-weight: 400;
+}
+
+/* ─── Principles Grid ────────────────────────────────────────────────────────── */
+.principles-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+  gap: 20px;
+  max-width: 1200px;
+  margin: 48px auto;
+  padding: 0 24px;
+}
+
+/* ─── Cards ──────────────────────────────────────────────────────────────────── */
+.card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  padding: 28px;
+  display: flex;
+  gap: 20px;
+  align-items: flex-start;
+  transition: transform var(--transition), box-shadow var(--transition), border-color var(--transition);
+  box-shadow: var(--shadow-card);
+  cursor: default;
+}
+
+.card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.6);
+}
+
+#srp-card { border-top: 3px solid var(--color-s); }
+#srp-card:hover { border-color: var(--color-s); }
+#ocp-card { border-top: 3px solid var(--color-o); }
+#ocp-card:hover { border-color: var(--color-o); }
+#lsp-card { border-top: 3px solid var(--color-l); }
+#lsp-card:hover { border-color: var(--color-l); }
+#isp-card { border-top: 3px solid var(--color-i); }
+#isp-card:hover { border-color: var(--color-i); }
+#dip-card { border-top: 3px solid var(--color-d); }
+#dip-card:hover { border-color: var(--color-d); }
+
+.card-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 10px;
+  display: grid;
+  place-items: center;
+  font-size: 1.5rem;
+  font-weight: 800;
+  flex-shrink: 0;
+}
+
+#srp-card .card-icon { background: rgba(88, 166, 255, 0.15); color: var(--color-s); }
+#ocp-card .card-icon { background: rgba(63, 185, 80, 0.15);  color: var(--color-o); }
+#lsp-card .card-icon { background: rgba(210, 168, 255, 0.15);color: var(--color-l); }
+#isp-card .card-icon { background: rgba(255, 166, 87, 0.15); color: var(--color-i); }
+#dip-card .card-icon { background: rgba(248, 81, 73, 0.15);  color: var(--color-d); }
+
+.card-body h2 {
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+  margin-bottom: 2px;
+}
+
+.card-body h3 {
+  font-size: 1.15rem;
+  font-weight: 700;
+  margin-bottom: 14px;
+}
+
+.card-body p {
+  font-size: 0.875rem;
+  color: var(--color-text-muted);
+  margin-bottom: 10px;
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+.card-body p:last-child { margin-bottom: 0; }
+
+.tag {
+  display: inline-block;
+  border-radius: 4px;
+  padding: 1px 7px;
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.tag.before { background: rgba(248, 81, 73, 0.15); color: #f85149; }
+.tag.after  { background: rgba(63, 185, 80, 0.15);  color: #3fb950; }
+
+code {
+  font-family: 'Fira Code', 'Cascadia Code', monospace;
+  font-size: 0.82em;
+  background: rgba(255,255,255,0.06);
+  border-radius: 4px;
+  padding: 1px 5px;
+  color: #e6edf3;
+}
+
+em { font-style: normal; color: var(--color-text); }
+
+/* ─── Footer ─────────────────────────────────────────────────────────────────── */
+.footer {
+  border-top: 1px solid var(--color-border);
+  text-align: center;
+  padding: 32px 24px;
+  color: var(--color-text-muted);
+  font-size: 0.85rem;
+}
+
+/* ─── Responsive ─────────────────────────────────────────────────────────────── */
+@media (max-width: 480px) {
+  .principles-grid { grid-template-columns: 1fr; }
+  .card { flex-direction: column; }
 }
