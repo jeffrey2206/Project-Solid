@@ -1,6 +1,5 @@
 # 🌿 Reserva Ecológica — Refactorización SOLID
 
-> **Autónomo 1** · Refactorización arquitectónica y resiliencia transaccional  
 > Stack: TypeScript · Vite · Principios SOLID · Conventional Commits
 
 ---
@@ -164,5 +163,3 @@ npm run build      # Compilar para producción
 ```
 
 ---
-
-*Proyecto desarrollado como ejercicio del Autónomo 1 — Refactorización SOLID y Resiliencia Transaccional.*
