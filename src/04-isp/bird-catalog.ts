@@ -1,39 +1,78 @@
+/**
+ * Catálogo de Fauna Aviar de la Reserva Ecológica
+ *
+ * ANTES (violación ISP): interfaz Bird con eat(), fly() y swim().
+ * - Toucan.swim() → implementación vacía sin sentido
+ * - Hummingbird.swim() → lanzaba Error en tiempo de ejecución
+ * - Ostrich.fly() → lanzaba Error en tiempo de ejecución
+ *
+ * DESPUÉS (ISP aplicado): cada ave implementa SOLO las interfaces
+ * que corresponden a su naturaleza biológica real.
+ * No hay métodos vacíos, no hay errores artificiales, no hay mentiras en el contrato.
+ */
+import type { CanEat, CanFly, CanSwim } from './bird-abilities.interfaces';
 
 /**
- * VIOLACIÓN AL PRINCIPIO DE SEGREGACIÓN DE INTERFAZ (ISP)
- * 
- * El catálogo de fauna define una interfaz "gorda" que obliga a las aves 
- * a implementar métodos que no les corresponden según su naturaleza.
+ * Tucán — Ave del dosel tropical de la Reserva.
+ * Come frutas y vuela, pero NO nada.
+ * Implementa: CanEat, CanFly
  */
+export class Toucan implements CanEat, CanFly {
+  eat(): void {
+    console.log('[Toucan] El Tucán come frutas del dosel tropical.');
+  }
 
-interface Bird {
-    eat(): void;
-    fly(): void;
-    swim(): void;
-}
-
-export class Toucan implements Bird {
-    public eat() { console.log('El Tucán está comiendo frutas.'); }
-    public fly() { console.log('El Tucán vuela sobre la selva.'); }
-    public swim() { console.log('El Tucán no suele nadar, pero implemento el método vacío.'); }
-}
-
-export class Hummingbird implements Bird {
-    public eat() { console.log('El Colibrí busca néctar.'); }
-    public fly() { console.log('El Colibrí aletea rápidamente.'); }
-    public swim() { throw new Error('Un colibrí no puede nadar'); }
+  fly(): void {
+    console.log('[Toucan] El Tucán vuela sobre la selva de la reserva.');
+  }
 }
 
 /**
- * VIOLACIÓN FLAGRANTE: El Avestruz es un ave, pero NO VUELA.
- * La interfaz Bird le obliga a implementar fly(), causando una excepción en tiempo de ejecución
- * o un comportamiento inesperado.
+ * Colibrí — Ave polinizadora de la Reserva.
+ * Bebe néctar y vuela con gran agilidad, pero NO nada.
+ * Implementa: CanEat, CanFly
  */
-export class Ostrich implements Bird {
-    public eat() { console.log('El Avestruz come hierbas.'); }
-    public fly() { 
-        // ¡Error! Violación de ISP.
-        throw new Error('Las avestruces NO vuelan.'); 
-    }
-    public swim() { console.log('El Avestruz puede nadar si es necesario.'); }
+export class Hummingbird implements CanEat, CanFly {
+  eat(): void {
+    console.log('[Hummingbird] El Colibrí libra néctar de las flores de la reserva.');
+  }
+
+  fly(): void {
+    console.log('[Hummingbird] El Colibrí aletea hasta 80 veces por segundo.');
+  }
+}
+
+/**
+ * Avestruz — Ave terrestre de la Reserva.
+ * Come y puede nadar, pero DEFINITIVAMENTE no vuela.
+ * Implementa: CanEat, CanSwim
+ * ❌ NO implementa CanFly → ISP correcto: no se fuerza ningún contrato falso.
+ */
+export class Ostrich implements CanEat, CanSwim {
+  eat(): void {
+    console.log('[Ostrich] El Avestruz come hierbas y semillas del suelo.');
+  }
+
+  swim(): void {
+    console.log('[Ostrich] El Avestruz puede cruzar cuerpos de agua a nado si es necesario.');
+  }
+}
+
+/**
+ * Pato — Ave semi-acuática de la Reserva.
+ * Come, vuela y nada. Implementa las tres habilidades.
+ * Implementa: CanEat, CanFly, CanSwim
+ */
+export class Duck implements CanEat, CanFly, CanSwim {
+  eat(): void {
+    console.log('[Duck] El Pato busca invertebrados en el agua.');
+  }
+
+  fly(): void {
+    console.log('[Duck] El Pato migra largas distancias en formación.');
+  }
+
+  swim(): void {
+    console.log('[Duck] El Pato nada en el humedal de la reserva.');
+  }
 }
