@@ -1,39 +1,42 @@
-
 /**
- * VIOLACIÓN AL PRINCIPIO DE RESPONSABILIDAD ÚNICA (SRP)
- * 
- * Este archivo muestra una clase "Dios" o un componente que hace demasiadas cosas.
- * En el contexto de la Reserva Ecológica, el ProductBloc gestiona el inventario de la tienda
- * de souvenirs y, al mismo tiempo, se encarga de las notificaciones por correo.
+ * ProductBloc — Orquestador de la tienda de souvenirs de la Reserva Ecológica
+ *
+ * ANTES (violación SRP): esta clase hacía TODO: cargaba productos, los guardaba
+ * Y enviaba correos. Tenía tres razones para cambiar.
+ *
+ * DESPUÉS (SRP aplicado): ProductBloc únicamente ORQUESTA. Delega la persistencia
+ * a ProductRepository y las notificaciones a MailerService.
+ * Ahora solo tiene UNA razón para cambiar: cuando cambia la lógica de negocio
+ * de la tienda (ej. reglas de validación de productos).
  */
-
-interface Product {
-    id: number;
-    name: string;
-}
+import type { Product } from './product.interface';
+import { ProductRepository } from './product.repository';
+import { MailerService } from './mailer.service';
 
 export class ProductBloc {
+  private readonly repository: ProductRepository;
+  private readonly mailer: MailerService;
 
-    private products: Product[] = [];
+  constructor(repository: ProductRepository, mailer: MailerService) {
+    this.repository = repository;
+    this.mailer = mailer;
+  }
 
-    // Responsabilidad 1: Carga de productos (Lógica de Negocio/Persistencia)
-    loadProduct(id: number) {
-        console.log(`Cargando producto con ID: ${id} desde el inventario del parque...`);
-        // Simulación de carga
-        return this.products.find(p => p.id === id);
-    }
+  /**
+   * Carga un producto del inventario por su ID.
+   */
+  loadProduct(id: number): Product | undefined {
+    return this.repository.findById(id);
+  }
 
-    // Responsabilidad 2: Guardado de productos (Lógica de Persistencia)
-    saveProduct(product: Product) {
-        console.log(`Guardando el producto ${product.name} en la base de datos de la reserva...`);
-        this.products.push(product);
-    }
-
-    // Responsabilidad 3: Envío de notificaciones (Servicio de Infraestructura)
-    // ESTA ES LA VIOLACIÓN: El Bloc no debería saber CÓMO enviar correos electrónicos.
-    notifyCustomer(email: string, message: string) {
-        console.log(`[Mailer] Enviando correo a ${email}: ${message}`);
-        // Lógica directa de envío de correo acoplada aquí
-    }
-
+  /**
+   * Agrega un producto al inventario y notifica al cliente responsable.
+   */
+  saveAndNotify(product: Product, managerEmail: string): void {
+    this.repository.save(product);
+    this.mailer.sendNotification(
+      managerEmail,
+      `El producto "${product.name}" fue agregado al inventario de la Reserva.`
+    );
+  }
 }
