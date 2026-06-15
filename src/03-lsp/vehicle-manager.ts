@@ -1,46 +1,28 @@
-
 /**
- * VIOLACIÓN AL PRINCIPIO DE SUSTITUCIÓN DE LISKOV (LSP)
- * 
- * En la flota de la reserva, intentamos manejar diversos vehículos.
- * Sin embargo, el cliente se ve obligado a conocer los detalles internos
- * de cada marca para poder operar, rompiendo la transparencia de la abstracción.
+ * VehicleManager — Gestor de la flota de vehículos de la Reserva Ecológica
+ *
+ * ANTES (violación LSP): el método printVehicleDetails hacía `instanceof Tesla`,
+ * `instanceof Audi`, etc. No se podía sustituir un vehículo por otro de forma
+ * transparente. Agregar una nueva marca requería MODIFICAR este método.
+ *
+ * DESPUÉS (LSP aplicado): VehicleManager opera sobre la ABSTRACCIÓN Vehicle[].
+ * Cualquier vehículo concreto (Tesla, Audi, Volvo —si se agrega— etc.) puede
+ * sustituir a Vehicle sin que VehicleManager lo note. El polimorfismo resuelve
+ * el despacho. Agregar una nueva marca = crear una nueva clase, sin tocar el manager.
  */
-
-export class Tesla { constructor(public model: string) {} }
-export class Audi  { constructor(public model: string) {} }
-export class Toyota{ constructor(public model: string) {} }
-export class Honda { constructor(public model: string) {} }
-export class Ford  { constructor(public model: string) {} }
+import type { Vehicle } from './vehicle.interface';
 
 export class VehicleManager {
-
-    /**
-     * VIOLACIÓN: Este método rompe LSP y OCP. 
-     * Si agregamos una nueva marca (ej. Volvo), debemos venir aquí a agregar otro 'if' o 'case'.
-     * Además, no podemos tratar a todos los vehículos por igual.
-     */
-    static printVehicleDetails( vehicles: (Tesla | Audi | Toyota | Honda | Ford)[] ) {
-        
-        vehicles.forEach( vehicle => {
-
-            if( vehicle instanceof Tesla ) {
-                console.log('Tesla Model:', vehicle.model, 'Carga eléctrica al 100%');
-            }
-            if( vehicle instanceof Audi ) {
-                console.log('Audi Model:', vehicle.model, 'Tracción Quattro activada');
-            }
-            if( vehicle instanceof Toyota ) {
-                console.log('Toyota Model:', vehicle.model, 'Motor híbrido listo');
-            }
-            if( vehicle instanceof Honda ) {
-                console.log('Honda Model:', vehicle.model, 'VTEC activado');
-            }
-            if( vehicle instanceof Ford ) {
-                console.log('Ford Model:', vehicle.model, 'Built Tough');
-            }
-
-        });
-    }
-
+  /**
+   * Imprime los detalles de cada vehículo en la flota.
+   * Opera exclusivamente sobre la abstracción Vehicle, respetando LSP.
+   *
+   * @param vehicles - Arreglo de vehículos de cualquier marca concreta.
+   */
+  static printFleetDetails(vehicles: Vehicle[]): void {
+    console.log('[VehicleManager] — Detalles de la flota de la Reserva Ecológica:');
+    vehicles.forEach((vehicle, index) => {
+      console.log(`  ${index + 1}. ${vehicle.getDetails()}`);
+    });
+  }
 }
